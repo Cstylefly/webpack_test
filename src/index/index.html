@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    ${require('raw-loader!./demo.html')}
+    <!-- 新写法 以前直接使用${require('raw-loader!./demo.html'}就行 -->
+    <%=require('raw-loader!./demo.html')%>
     <title>Document</title>
 </head>
 <body>
