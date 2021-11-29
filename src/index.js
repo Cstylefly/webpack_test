@@ -9,7 +9,7 @@ class App extends Component{
     render(){
         return (
             <div className="webpack-test">
-                hello webpack
+                hello webpack1
                 <p className="webpack-test-les">hhhh</p>
                 <img src={IuLogo} />
             </div>
