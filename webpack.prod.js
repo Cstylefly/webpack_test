@@ -1,9 +1,10 @@
 const path = require("path/posix");
-const { HotModuleReplacementPlugin,} = require("webpack");
+const { HotModuleReplacementPlugin, optimize} = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin")
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const HtmlWebpackExternalsPlugin = require("html-webpack-externals-plugin")
 const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 
 module.exports = {
@@ -71,7 +72,7 @@ module.exports = {
             }
         ]
     },
-    mode:'production',
+    mode:'development',
     plugins:[
         new HotModuleReplacementPlugin(), // 热更新插件
         new MiniCssExtractPlugin({
@@ -82,7 +83,7 @@ module.exports = {
             inject:true,                  // 是否控制在底部加载引入的js
             template:'./src/index/index.html',  // 模版html
             filename:'index.html',         // 生成的html文件名
-            chunk:['index'],
+            chunk:['vendor','index'],
             minify:{
                 html5:true, // 根据HTML5规范解析输入
                 collapseWhitespace:true, // 移除换行符
@@ -92,7 +93,23 @@ module.exports = {
             }
         }),
         new CssMinimizerPlugin(),//webpack5中css压缩插件
-        new CleanWebpackPlugin() //自动清除构建产物
+        new CleanWebpackPlugin(), //自动清除构建产物
+        // 使用cdn外联的方式将第三方导入的不打包进bundle中，以此来减小bundle包的体积（需要额外在入口js文件中导入）
+        new HtmlWebpackExternalsPlugin({
+            externals:[
+                {
+                    module:'react',
+                    entry:'https://unpkg.com/react@16/umd/react.production.min.js',
+                    global:'React'
+                },
+                {
+                    module:'react-dom',
+                    entry:'https://unpkg.com/react-dom@16/umd/react-dom.production.min.js',
+                    global:'ReactDOM'
+                }
+            ]
+        }),
+        new optimize.ModuleConcatenationPlugin() // 开启scope hoisting production下默认开启
         // new OptimizeCssAssetsPlugin({
         //     assetNameRegExp:/\.css$/g,
         //     cssProcessor:require('cssnano')
@@ -102,5 +119,8 @@ module.exports = {
         static:path.join(__dirname,'dist'), // 需要监测的文件夹路径
         hot:true, // 是否需要热更新
         port:3003 // 打开的网页的端口号
+    },
+    optimization:{
+        usedExports:true
     }
 }

@@ -137,6 +137,7 @@ module.exports = {
         // }),
         new CssMinimizerPlugin(),//webpack5中css压缩插件
         new CleanWebpackPlugin() //自动清除构建产物
+
         // new OptimizeCssAssetsPlugin({
         //     assetNameRegExp:/\.css$/g,
         //     cssProcessor:require('cssnano')
@@ -146,5 +147,26 @@ module.exports = {
         static:path.join(__dirname,'dist'), // 需要监测的文件夹路径
         hot:true, // 是否需要热更新
         port:3003 // 打开的网页的端口号
+    },
+    optimization:{
+        splitChunks:{
+            chunks:'async',
+            cacheGroups:{
+                vendor:{
+                    name:'vendor',
+                    test:/[\\/]node_modules[\\/]/,
+                    chunks:'all',
+                    priority:10
+                },
+                // 分离[多]页面共用的模块
+                common:{
+                    name:'common',
+                    test:/[\\/]src[\\/]/,
+                    minSize:1024,
+                    chunks:'all',
+                    priority:5
+                }
+            }
+        }
     }
 }
