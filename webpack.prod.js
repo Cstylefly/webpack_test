@@ -6,6 +6,7 @@ const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const HtmlWebpackExternalsPlugin = require("html-webpack-externals-plugin")
 const {CleanWebpackPlugin} = require("clean-webpack-plugin");
+const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin")
 
 module.exports = {
     entry:'./src/index/index.js', // 需要打包的单页面入口文件
@@ -109,7 +110,8 @@ module.exports = {
                 }
             ]
         }),
-        new optimize.ModuleConcatenationPlugin() // 开启scope hoisting production下默认开启
+        new optimize.ModuleConcatenationPlugin(), // 开启scope hoisting production下默认开启
+        new FriendlyErrorsWebpackPlugin() // 控制台输出日志优化插件
         // new OptimizeCssAssetsPlugin({
         //     assetNameRegExp:/\.css$/g,
         //     cssProcessor:require('cssnano')
@@ -122,5 +124,6 @@ module.exports = {
     },
     optimization:{
         usedExports:true
-    }
+    },
+    stats:'errors-only'
 }
